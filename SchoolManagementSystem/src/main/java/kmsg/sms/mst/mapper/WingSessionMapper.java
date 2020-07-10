@@ -17,7 +17,7 @@ public class WingSessionMapper implements RowMapper<WingSession>
 		ses.setWing(rs.getString("wing"));
 		ses.setWingSessionId(rs.getInt("wing_session_id"));
 		ses.setWingSession(rs.getString("wing_session"));
-		ses.setSessionType(rs.getString("wing_id"));
+		ses.setSessionType(rs.getString("session_type"));
 		ses.setFromDt(rs.getString("from_dt"));
 		ses.setToDt(rs.getString("to_dt"));
 		return ses;
