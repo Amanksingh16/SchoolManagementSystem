@@ -13,6 +13,7 @@ import kmsg.sms.common.SvcStatus;
 import kmsg.sms.mst.daoimpl.WingsDaoImpl;
 import kmsg.sms.mst.model.AcademicSchedule;
 import kmsg.sms.mst.model.AcademicYear;
+import kmsg.sms.mst.model.WingSession;
 import kmsg.sms.mst.model.Wings;
 
 @Component
@@ -101,5 +102,31 @@ public class WingsAdapter implements SMSLogger
 	public Map<String, Object> selectAcademicYear(String wingId) 
 	{
 		return dao.selectAcademicYear(Integer.parseInt(wingId));
+	}
+
+	public Map<String, Object> saveWingSession(String wingSession) 
+	{
+		Map<String,Object> map = new HashMap<>();
+		WingSession model = new WingSession();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			model = mapper.readValue(wingSession, WingSession.class);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			map.put(SvcStatus.STATUS,SvcStatus.FAILURE);
+			map.put(SvcStatus.MSG,"Exception Occured in wing session");
+			return map;
+		}
+		if(model.getWingSessionId() == 0)
+			return dao.insertNewWingSession(model);
+		else
+			return dao.updateWingSession(model);
+	}
+
+	public Map<String, Object> selectWingSessions(String wingId) 
+	{
+		return dao.selectWingSessions(Integer.parseInt(wingId));
 	}
 }

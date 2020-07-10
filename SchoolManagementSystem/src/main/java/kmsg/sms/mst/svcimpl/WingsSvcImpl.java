@@ -67,6 +67,43 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	}
 	
 	@Override
+	@RequestMapping(value="/ses/list", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> listWingSessions(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	{
+		Map<String,Object> map = new HashMap<>();
+		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
+		{	
+			int schoolId = (int)map.get("schoolId");
+			adapter.setSchoolId(schoolId);
+			String wingId = params.get("wingId");
+			return adapter.selectWingSessions(wingId);
+		}
+		return map;
+	}
+	
+	@Override
+	@RequestMapping(value="/ses/save", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> saveWingSessions(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	{
+		Map<String,Object> map = new HashMap<>();
+		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
+		{
+			int schoolId=(int) map.get("schoolId");
+			adapter.setSchoolId(schoolId);
+			String wingSession = params.get("wingSession");
+			
+			return adapter.saveWingSession(wingSession);
+		}
+		return map;
+	}
+	
+	@Override
 	@RequestMapping(value="/year/list", method = RequestMethod.POST, headers="Accept=application/json")
 	public Map<String, Object> listAcademicYear(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
 	{

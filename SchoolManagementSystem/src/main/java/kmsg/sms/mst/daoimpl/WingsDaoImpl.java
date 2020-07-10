@@ -21,9 +21,11 @@ import kmsg.sms.common.SvcStatus;
 import kmsg.sms.mst.daoint.WingsDaoInt;
 import kmsg.sms.mst.mapper.AcademicScheduleMapper;
 import kmsg.sms.mst.mapper.AcademicYearMapper;
+import kmsg.sms.mst.mapper.WingSessionMapper;
 import kmsg.sms.mst.mapper.WingsMapper;
 import kmsg.sms.mst.model.AcademicSchedule;
 import kmsg.sms.mst.model.AcademicYear;
+import kmsg.sms.mst.model.WingSession;
 import kmsg.sms.mst.model.Wings;
 
 @Repository
@@ -341,5 +343,112 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 			logger.error("updateAcademicSchedule:Exception to update Academic Year :" + model.getWingId());
 			return SvcStatus.GET_FAILURE("Academic Schedule could not be updated. Contact System Admin");
 		}
+	}
+
+	public Map<String, Object> insertNewWingSession(WingSession model) 
+	{
+		final String SQL = "INSERT INTO "+schoolId+"_wing_session(wing_id,wing_session,from_dt,to_dt,session_type) VALUES (?,?,STR_TO_DATE(?,'%d-%m-%Y'),STR_TO_DATE(?,'%d-%m-%Y'),?)";
+
+		int count = 0;
+		KeyHolder holder = new GeneratedKeyHolder();
+		try {
+			count = template.update(new PreparedStatementCreator() {
+				@Override
+				public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+					PreparedStatement ps = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+					
+					ps.setInt(1, model.getWingId());
+					ps.setString(2, model.getWingSession());
+					ps.setString(3, model.getFromDt());
+					ps.setString(4, model.getToDt());
+					ps.setString(5, model.getSessionType());
+					return ps;
+				}
+			}, holder);
+		} catch (Exception e) {
+			logger.error("insertWingSession:Exception occured: Wing Session " + model.getWingSession() + ": " + e.getMessage());
+			return SvcStatus.GET_FAILURE("Error occured in saving Wing Session. Contact System Admin");
+		}
+
+		if (count > 0) {
+			Map<String, Object> data = new HashMap<>();
+			data.put("wingSessionId", holder.getKey().intValue());
+			data.put(SvcStatus.STATUS, SvcStatus.SUCCESS);
+			data.put(SvcStatus.MSG, "New Wing Session Added");
+			return data;
+		} else {
+			return SvcStatus.GET_FAILURE("Wing Session could not be added. Contact System Admin");
+		}
+	}
+
+	public Map<String, Object> updateWingSession(WingSession model) 
+	{
+		final String SQL = "UPDATE "+schoolId+"_wing_session SET "
+				+ " from_dt = STR_TO_DATE(?,'%d-%m-%Y'),"
+				+ " to_dt = STR_TO_DATE(?,'%d-%m-%Y')," 
+				+ " session_type = ?," 
+				+ " wing_session = ?,"
+				+ " wing_id = ?" 
+				+ " WHERE wing_session_id = ? ";
+
+		int count = 0;
+		try {
+			count = template.update(SQL,
+					new Object[] { 
+								model.getFromDt(),
+								model.getToDt(),
+								model.getSessionType(),
+								model.getWingSession(),
+								model.getWingId(),
+								model.getWingSessionId()
+							});
+		} catch (Exception e) {
+			logger.error("updateWingSession:Exception occured: Wing Session : " + model.getWingSession() + ": " + e.getMessage());
+			return SvcStatus.GET_FAILURE("Error occured in updating Wing Session. Contact System Admin");
+		}
+		
+		if (count > 0) {
+			return SvcStatus.GET_SUCCESS("Wing Session updated");
+		} else {
+			logger.error("updateWingSession:Exception to update Wing Session :" + model.getWingId());
+			return SvcStatus.GET_FAILURE("Wing Session could not be updated. Contact System Admin");
+		}
+	}
+
+	public Map<String, Object> selectWingSessions(int wingId) 
+	{
+		Map<String, Object> result = new HashMap<>();
+		
+		final String SQL =  "SELECT "
+				+ " wing_session_id,"
+				+ " DATE_FORMAT(from_dt,'%d-%m-%Y') as from_dt,"
+				+ " DATE_FORMAT(to_dt,'%d-%m-%Y') as to_dt,"
+				+ " session_type,"
+				+ " wing_session,"
+				+ " w.wing_id,"
+				+ " w.wing"
+				+ " FROM "+schoolId+"_wing_session ws"
+				+ " JOIN "+schoolId+"_wings w ON w.wing_id = ws.wing_id"
+				+ " WHERE ws.wing_id = ?";
+
+		List<WingSession> list = new ArrayList<>();
+		try {
+			list = template.query( SQL,new Object[] {wingId}, new WingSessionMapper());
+			if(list.size() == 0)
+			{
+				result.put( SvcStatus.STATUS, SvcStatus.FAILURE);
+				result.put( SvcStatus.MSG, "No session exist for this wing");
+				return result;
+			}
+		}
+		catch(Exception e) {
+			logger.error("selectWingSession occured:" + e.getMessage());
+			e.printStackTrace();
+			return SvcStatus.GET_FAILURE("Error occured in selecting WingSession. Contact system admin") ;
+		}
+		
+		result.put( SvcStatus.STATUS, SvcStatus.SUCCESS);
+		result.put( "lstWingSession", list);
+		return result ;
 	}
 }

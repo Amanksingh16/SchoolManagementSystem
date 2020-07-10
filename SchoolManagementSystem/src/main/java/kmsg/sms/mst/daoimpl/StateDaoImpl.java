@@ -23,7 +23,7 @@ public class StateDaoImpl implements StateDaoInt,SMSLogger{
 	public Map<String, Object> getStateList() 
 	{
 		final String SQL = 
-				" SELECT mst_state_id,"
+				" SELECT state_id,"
 				+ " IFNULL(state,state) as state_label"
 				+ " FROM mst_state";
 		

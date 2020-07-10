@@ -26,4 +26,10 @@ public interface WingsSvcInt {
 	Map<String, Object> listAcademicYear(Map<String, String> params, HttpSession httpSession,
 			HttpServletRequest request, HttpServletResponse response);
 
+	Map<String, Object> listWingSessions(Map<String, String> params, HttpSession httpSession,
+			HttpServletRequest request, HttpServletResponse response);
+
+	Map<String, Object> saveWingSessions(Map<String, String> params, HttpSession httpSession,
+			HttpServletRequest request, HttpServletResponse response);
+
 }

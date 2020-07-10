@@ -12,7 +12,7 @@ public class StateMapper implements RowMapper<StateModel>
 
 	@Override
 	public StateModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new StateModel(rs.getInt("mst_state_id"), rs.getString("state_label"));
+		return new StateModel(rs.getInt("state_id"), rs.getString("state_label"));
 	}
 
 }
