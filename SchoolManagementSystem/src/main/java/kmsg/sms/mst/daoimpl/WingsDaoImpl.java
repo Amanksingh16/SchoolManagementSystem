@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -96,7 +98,12 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 					return ps;
 				}
 			}, holder);
-		} catch (Exception e) {
+		} 
+		catch(DuplicateKeyException e) {
+			logger.error("insertWing : Duplicate Key insertWing:" + model.getWing());
+			return SvcStatus.GET_FAILURE("Wing name already exist" +  model.getWing());
+		}
+		catch (Exception e) {
 			logger.error("insertWing:Exception occured:" + model.getWing() + ": " + e.getMessage());
 			return SvcStatus.GET_FAILURE("Error occured in adding Wing. Contact System Admin");
 		}
@@ -131,7 +138,12 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 								model.getToClassId(),
 								model.getWingId(),
 							});
-		} catch (Exception e) {
+		} 
+		catch(DuplicateKeyException e) {
+			logger.error("insertWing : Duplicate Key insertWing:" + model.getWing());
+			return SvcStatus.GET_FAILURE("Wing name already exist" +  model.getWing());
+		}
+		catch (Exception e) {
 			logger.error("updateWing:Exception occured: Wing : " + model.getWingId() + ": " + e.getMessage());
 			return SvcStatus.GET_FAILURE("Error occured in updating wing. Contact System Admin");
 		}
@@ -365,7 +377,12 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 					return ps;
 				}
 			}, holder);
-		} catch (Exception e) {
+		}
+		catch(DuplicateKeyException e) {
+			logger.error("insertWingSession : Duplicate Key insertWingSession:" + model.getWingSession());
+			return SvcStatus.GET_FAILURE("Wing session already exist" +  model.getWingSession());
+		}
+		catch (Exception e) {
 			logger.error("insertWingSession:Exception occured: Wing Session " + model.getWingSession() + ": " + e.getMessage());
 			return SvcStatus.GET_FAILURE("Error occured in saving Wing Session. Contact System Admin");
 		}
@@ -402,7 +419,12 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 								model.getWingId(),
 								model.getWingSessionId()
 							});
-		} catch (Exception e) {
+		} 
+		catch(DuplicateKeyException e) {
+			logger.error("updateWingSession : Duplicate Key updateWingSession:" + model.getWingSession());
+			return SvcStatus.GET_FAILURE("Wing session already exist" +  model.getWingSession());
+		}
+		catch (Exception e) {
 			logger.error("updateWingSession:Exception occured: Wing Session : " + model.getWingSession() + ": " + e.getMessage());
 			return SvcStatus.GET_FAILURE("Error occured in updating Wing Session. Contact System Admin");
 		}
@@ -450,5 +472,58 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 		result.put( SvcStatus.STATUS, SvcStatus.SUCCESS);
 		result.put( "lstWingSession", list);
 		return result ;
+	}
+
+	public int checkExistingWing(Wings model) 
+	{
+		final String SQL =  " SELECT wing_id " + 
+				" FROM "+schoolId+"_wings" + 
+				" WHERE " + 
+				" CASE WHEN (? = from_std_id AND ? = to_std_id) OR (? = to_std_id) OR (? = from_std_id)" + 
+				" IS TRUE THEN " + 
+				" TRUE" + 
+				" ELSE( " + 
+				"		CASE WHEN ((? > from_std_id AND ? < to_std_id)" + 
+				"		OR  " + 
+				"		(? > from_std_id AND ? < to_std_id)" + 
+				"	 ) " + 
+				"     IS FALSE THEN " + 
+				"	 ( " + 
+				"		(from_std_id > ? AND from_std_id < ?) OR  " + 
+				"	    (to_std_id > ? AND to_std_id < ?)  " + 
+				"	 ) " + 
+				"	 ELSE TRUE END " + 
+				" )"+
+			    " END AND" + 
+				" ( " + 
+				"	? = 0 OR wing_id != ?" + 
+				" )  " + 
+				" LIMIT 1 ;";
+		try {
+			return template.queryForObject(SQL, new Object[] {
+					 model.getFromClassId()
+					 , model.getToClassId()
+					 , model.getFromClassId()
+					 , model.getToClassId()
+					 , model.getFromClassId()
+					 , model.getFromClassId()
+					 , model.getToClassId()
+					 , model.getToClassId()
+					 , model.getFromClassId()
+					 , model.getToClassId()
+					 , model.getFromClassId()
+					 , model.getToClassId()
+					, model.getWingId()
+					, model.getWingId()
+			}, Integer.class);
+		}
+		catch(EmptyResultDataAccessException e) {
+			logger.error("selectExistingWing: No Wing found");
+			return 0;
+		}
+		catch(Exception e) {
+			logger.error("selectExistingSlot: Exception occured:" + e.getMessage());
+			return -1 ;
+		}
 	}
 }

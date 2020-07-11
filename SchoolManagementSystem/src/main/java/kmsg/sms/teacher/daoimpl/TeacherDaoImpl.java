@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import kmsg.sms.common.SMSLogger;
 import kmsg.sms.common.SvcStatus;
+import kmsg.sms.common.Util;
 import kmsg.sms.teacher.daoint.TeacherDaoInt;
 import kmsg.sms.teacher.mapper.TeacherDocMapper;
 import kmsg.sms.teacher.mapper.TeacherMapper;
@@ -30,6 +31,7 @@ import kmsg.sms.teacher.model.TeacherClassModel;
 import kmsg.sms.teacher.model.TeacherClassSubjectModel;
 import kmsg.sms.teacher.model.TeacherDocModel;
 import kmsg.sms.teacher.model.TeacherEducationModel;
+import kmsg.sms.teacher.model.TeacherRole;
 
 @Repository
 public class TeacherDaoImpl implements TeacherDaoInt, SMSLogger{
@@ -42,6 +44,88 @@ public class TeacherDaoImpl implements TeacherDaoInt, SMSLogger{
 	@Override
 	public void setSchoolId(int schoolId) {
 		this.schoolId = schoolId;
+	}
+	
+
+	@Override
+	public Map<String, Object> selectTeacherRoles(int teacherId) {
+		final String SQL = 
+				"SELECT"
+					+ " tr.teacher_role_id"
+					+ ", tr.teacher_id"
+					+ ", r.role_id"
+					+ ", r.role_name"
+					+ ", r.role_desc"
+				+ " FROM " + schoolId + "_teacher_role t JOIN mst_roles r ON r.role_id = tr.role_id"
+				+ " WHERE teacher_id = ?"
+				+ " ORDER BY r.role_name" ;
+		
+		List<ManageTeacher> list = new ArrayList<>();
+		try {
+			list = template.query(SQL,new Object[] {schoolId}, new TeacherMapper());
+		} 
+		catch (Exception e) {
+			System.out.println(e);
+			logger.error("selectTeacher: Exception in selecting Teacher " + e);
+			return SvcStatus.GET_FAILURE("Error occured in selecting Teacher. Contact System admin");
+		}
+		
+		Map<String, Object> result = new HashMap<>();
+		result.put(SvcStatus.STATUS, SvcStatus.SUCCESS);
+		result.put("lstTeacherRole",  list );
+		return result ;	
+	}
+	
+	@Override
+	public Map<String, Object> insertTeacherRole(TeacherRole model) {
+
+		final String SQL =
+				"INSERT INTO " + schoolId+"_teacher_role("
+					+ "teacher_id"
+					+ ",role_id"
+					+ ",assigned_dttm"
+				+ ") VALUES (?,?,STR_TO_DATE(?, '%Y-%m-%d %H:%i:%s')";
+	
+	    int count = 0;
+		KeyHolder holder = new GeneratedKeyHolder();
+		try {
+			 count = template.update (
+				new PreparedStatementCreator() {
+					@Override
+					public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+						PreparedStatement ps = conn.prepareStatement(
+													SQL,
+													Statement.RETURN_GENERATED_KEYS
+																	);
+						int ctr=1;
+						ps.setInt( ctr++, model.getTeacherId());
+						ps.setInt( ctr++, model.getRoleId());
+						ps.setString( ctr++, Util.Now());
+						
+						return ps ;
+					}
+				}, holder ) ;
+		}
+		catch(DuplicateKeyException e) {
+			logger.error("insertTeacherRole: Duplicate Role for Teacher:" + model.getTeacherId());
+			return SvcStatus.GET_FAILURE("Role already exist" +  model.getTeacherId());
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			logger.error("insertTeacherRole: Exception occured in insertTeacherRole:" + model.getTeacherId() + ": " + e.getMessage());
+			return SvcStatus.GET_FAILURE("Error occured in adding Role for teacher. Contact System Admin");
+		}
+		
+		if (count == 1 ) {
+			Map<String, Object> data = new HashMap<>();
+			data.put("teacherRoleId", holder.getKey().intValue());
+			data.put(SvcStatus.MSG, "Role added");
+			data.put(SvcStatus.STATUS, SvcStatus.SUCCESS);
+			return data;
+		}
+		else {
+			return SvcStatus.GET_FAILURE("Teacher Role could not be added. Contact System Admin");
+		}
 	}
 
 	@Override

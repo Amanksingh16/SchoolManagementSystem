@@ -87,6 +87,41 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 		return map;
 	}
 	
+	@Override
+	@RequestMapping(value="/get_teacher_roles", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> getTeacherRoles(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String,Object> map = new HashMap<>();
+		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+		
+		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			int schoolId=(int) map.get("schoolId");
+			adapter.setSchoolId(schoolId);
+			String schoolTeacher = params.get("teacherId");
+			return adapter.getTeacherRoles(Integer.parseInt(schoolTeacher));
+		}
+		return map;
+	}
+	
+	@Override
+	@RequestMapping(value="/save_role", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> saveTeacherRole(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		Map<String,Object> map = new HashMap<>();
+		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
+		{
+			int schoolId=(int) map.get("schoolId");
+			adapter.setSchoolId(schoolId);
+			String strTeacherRole = params.get("teacherRole");
+			return adapter.saveTeacherRole( strTeacherRole);
+		}
+		return map;
+	}
+	
 	@RequestMapping(value="/docslist", method = RequestMethod.POST, headers="Accept=application/json")
 	public Map<String, Object> getDocList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{

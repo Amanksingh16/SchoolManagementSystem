@@ -41,4 +41,10 @@ public interface TeacherSvcInt {
 
 	Map<String, Object> deleteClass(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
+
+	Map<String, Object> saveTeacherRole(Map<String, String> params, HttpSession session, HttpServletRequest request,
+			HttpServletResponse response);
+
+	Map<String, Object> getTeacherRoles(Map<String, String> params, HttpSession session, HttpServletRequest request,
+			HttpServletResponse response);
 }

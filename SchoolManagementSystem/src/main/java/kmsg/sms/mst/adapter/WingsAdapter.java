@@ -46,6 +46,14 @@ public class WingsAdapter implements SMSLogger
 			e.printStackTrace();
 			return SvcStatus.GET_FAILURE("Exception Occured in wings");
 		}
+		int check = dao.checkExistingWing(model);
+		
+		if(check == -1)
+			return SvcStatus.GET_FAILURE("Exception Occured in checking existing wing");
+		
+		if(check != 0)
+			return SvcStatus.GET_FAILURE("Wing for this class already exist");
+		
 		if(model.getWingId() == 0)
 			return dao.insertNewWing(model);
 		else

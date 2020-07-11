@@ -8,6 +8,7 @@ import kmsg.sms.teacher.model.TeacherClassModel;
 import kmsg.sms.teacher.model.TeacherClassSubjectModel;
 import kmsg.sms.teacher.model.TeacherDocModel;
 import kmsg.sms.teacher.model.TeacherEducationModel;
+import kmsg.sms.teacher.model.TeacherRole;
 
 public interface TeacherDaoInt {
 	public Map<String, Object> saveTeacher(ManageTeacher model);
@@ -47,4 +48,8 @@ public interface TeacherDaoInt {
 	Map<String, Object> getTeacherClassList(int teacherId);
 
 	Map<String, Object> getTeacherEducationList(int teacherId);
+
+	Map<String, Object> insertTeacherRole(TeacherRole model);
+
+	Map<String, Object> selectTeacherRoles(int teacherId);
 }

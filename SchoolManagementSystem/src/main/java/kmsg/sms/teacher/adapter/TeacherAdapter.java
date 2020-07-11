@@ -24,6 +24,7 @@ import kmsg.sms.teacher.model.TeacherClassModel;
 import kmsg.sms.teacher.model.TeacherClassSubjectModel;
 import kmsg.sms.teacher.model.TeacherDocModel;
 import kmsg.sms.teacher.model.TeacherEducationModel;
+import kmsg.sms.teacher.model.TeacherRole;
 
 @Component
 public class TeacherAdapter implements SMSLogger {
@@ -38,6 +39,28 @@ public class TeacherAdapter implements SMSLogger {
 
 	@Value("${saveFilePath}")
 	private String saveFilePath;
+	
+	public Map<String, Object> saveTeacherRole(String strTeacherRole) {
+		
+		Map<String,Object> map = new HashMap<>();
+		TeacherRole model = new TeacherRole();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			model = mapper.readValue(strTeacherRole, TeacherRole.class);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			map.put(SvcStatus.STATUS,SvcStatus.FAILURE);
+			map.put(SvcStatus.MSG, "Exception Occured in data of Teacher Role");
+			return map;
+		}
+		
+		return dao.insertTeacherRole(model);
+	}
+	
+	public Map<String, Object> getTeacherRoles(int teacherId) {
+		return dao.selectTeacherRoles(teacherId);
+	}
 	
 	public Map<String, Object> addTeacher(String teacher) { 
 		
