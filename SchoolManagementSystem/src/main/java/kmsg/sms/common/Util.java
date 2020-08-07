@@ -17,6 +17,12 @@ public final class Util
 		return df.format(date);
 	}
 	
+	public final static String TodayDate()
+	{
+		Date date = new Date();
+		return new SimpleDateFormat("yyyy-MM-dd").format(date);
+	}
+	
 	public final static String Today()
 	{
 		Date date = new Date();
@@ -168,11 +174,11 @@ public final class Util
 		
 	  /// Length of password.
 	public static final int PASSWORD_LENGTH = 8;
-
+	static String letters = "0123456789abcdefghijklmnopqrstuvwxyz!@#$&";
+	public static final int TOKEN_LENGTH = 30;
+	
 	  public static String generateRandomPassword()
 	  {
-	      String letters = "0123456789abcdefghijklmnopqrstuvwxyz!@#$&";
-
 	      String pw = "";
 	      
 	      for (int i=0; i < PASSWORD_LENGTH; i++)
@@ -182,6 +188,19 @@ public final class Util
 	      }
 	      return pw;
 	  }
+
+	  public static String generateRandomTOKEN()
+	  {
+	      String tk = "";
+	      
+	      for (int i=0; i < TOKEN_LENGTH; i++)
+	      {
+	          int index = (int)(RANDOM.nextDouble() * letters.length());
+	          tk += letters.substring(index, index+1);
+	      }
+	      return tk;
+	  }
+
 	// ends here*******************************************************************************
 	  
 	// OTP Generation code starts**************************************************************

@@ -18,13 +18,14 @@ public class EnquiryMapper implements RowMapper<Enquiry> {
 		model.setEnquiryId(rs.getInt("enquiry_id"));
 		model.setEnquiryNo(rs.getString("enquiry_no"));
 		model.setEnquiry(rs.getString("enquiry"));
+		model.setEnquiryDt(rs.getString("enquiry_dt"));
 		model.setGender(rs.getString("gender"));
 		model.setAge(rs.getInt("age"));
 		model.setContactNo(rs.getString("contact_no"));
 		model.seteMail(rs.getString("email"));
 		model.setSourceId(rs.getInt("source_id"));
 		model.setSource(EnquiryType.get(rs.getInt("source_id")));
-		model.setClasses(new Classes(rs.getInt("class_id"), rs.getString("class")));
+		model.setClasses(new Classes(rs.getInt("class_id"), rs.getString("class_name")));
 		model.setAssignedToId(rs.getInt("assigned_to_id"));
 		model.setAssignedTo(rs.getString("teacher"));
 		model.setAssignedOn(rs.getString("assigned_dt"));

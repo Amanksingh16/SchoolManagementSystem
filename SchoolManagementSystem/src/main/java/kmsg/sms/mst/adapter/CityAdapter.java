@@ -13,9 +13,9 @@ public class CityAdapter {
 	@Autowired
 	CityDaoImpl dao;
 	
-	public Map<String, Object> getCityList() 
+	public Map<String, Object> getCityList(String stateId) 
 	{
-		return dao.getCityList();
+		return dao.getCityList(Integer.parseInt(stateId));
 	}
 
 }

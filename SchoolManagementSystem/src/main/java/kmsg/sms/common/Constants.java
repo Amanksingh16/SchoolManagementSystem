@@ -4,7 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.sql.DataSource;
 
@@ -20,10 +23,13 @@ public class Constants
 	public final static int PENDING = 10;
 	public final static int SENT = 20;
 	public final static int CLICKED = 30;
+	public final static int SESSION_EXPIRE_TIME_HOURS = 8;
+	public final static int TOKEN_EXPIRE_TIME_MINUTES = 20;
 	public static Map<String,String> phoneOTP = new HashMap<>();
 	public static Map<Integer,String> forgotPassword = new HashMap<>();
 	public static DataSource dataSource = new DriverManagerDataSource();
 	private static String saveFilePath;
+	public static List<Integer> WEEKDAYS = IntStream.range(0, 53).boxed().collect(Collectors.toList());
 	
 	//public static final BuyerType[] = [{"buyerTypeId":1,"Buyer"},{"buyerTypeId"=2,"buyerType":"Merchant"},{"buyerTypeId":3,"buyerType":"Factory"}]
 	public static String MSG_OOPS = "Oops! Something bad happened. Contact system administrator";

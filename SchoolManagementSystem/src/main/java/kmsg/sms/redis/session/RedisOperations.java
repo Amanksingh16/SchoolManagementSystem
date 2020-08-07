@@ -1,6 +1,8 @@
 package kmsg.sms.redis.session;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -27,15 +29,22 @@ public class RedisOperations {
     
     @PostConstruct
     public void clearSessions() {
-    	for(RedisData d : findAll())
-    		delete(d.getSessionId());
+    	Set<Object> set = GetAll();
+  
+    	Iterator<Object> itr = set.iterator();
+    	while(itr.hasNext()){
+    	  	delete((String)itr.next());
+    	}
     }
 
-    public void save(RedisData data, String sessionId){  	
-        hashOperations.put("SCHOOL", sessionId, data);
+    public void save(RedisData data, String tpkenId){  	
+        hashOperations.put("SCHOOL", tpkenId, data);
     }
     public List<RedisData> findAll(){
         return hashOperations.values("SCHOOL");
+    }
+    public Set<Object> GetAll(){
+        return hashOperations.keys("SCHOOL");
     }
     public RedisData findById(String id){
         return (RedisData) hashOperations.get("SCHOOL", id);

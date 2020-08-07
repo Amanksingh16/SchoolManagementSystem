@@ -322,7 +322,7 @@ public class TeacherDaoImpl implements TeacherDaoInt, SMSLogger{
 			return null;
 		}	
 	}
-	
+
 	@Override
 	public Map<String, Object> getTeacherDocsList(int teacherId) {
 
@@ -473,7 +473,34 @@ public class TeacherDaoImpl implements TeacherDaoInt, SMSLogger{
 			return SvcStatus.GET_FAILURE("Document could not be added. Contact System Admin");
 		}
 	}
-	
+
+	@Override
+	public Map<String, Object> deleteTeacherRole(TeacherRole model) {
+
+		final String SQL =
+				"DELETE FROM " + schoolId+"_teacher_role "
+				+ " WHERE teacher_role_id = ? ";
+		int count = 0;
+		try {
+			 count = template.update ( SQL, new Object[] {model.getTeacherRoleId()});
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			logger.error("insertTeacherRole: Exception occured in insertTeacherRole:" + model.getTeacherId() + ": " + e.getMessage());
+			return SvcStatus.GET_FAILURE("Error occured in adding Role for teacher. Contact System Admin");
+		}
+		
+		if (count == 1 ) {
+			Map<String, Object> data = new HashMap<>();
+			data.put(SvcStatus.MSG, "Role removed from Teacher");
+			data.put(SvcStatus.STATUS, SvcStatus.SUCCESS);
+			return data;
+		}
+		else {
+			return SvcStatus.GET_FAILURE("Teacher Role could not be removed. Contact System Admin");
+		}
+	}
+
 	@Override
 	public Map<String, Object> updateDocument(TeacherDocModel model) {
 		

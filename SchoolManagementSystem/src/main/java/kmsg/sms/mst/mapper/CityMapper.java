@@ -11,6 +11,6 @@ public class CityMapper implements RowMapper<CityModel> {
 
 	@Override
 	public CityModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new CityModel(rs.getInt("mst_city_id"), rs.getInt("state_id"), rs.getString("city"));	}
+		return new CityModel(rs.getInt("city_id"), rs.getInt("state_id"), rs.getString("city"));	}
 
 }

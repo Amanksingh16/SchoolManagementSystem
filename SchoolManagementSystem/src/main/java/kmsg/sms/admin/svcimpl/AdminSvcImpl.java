@@ -31,7 +31,7 @@ public class AdminSvcImpl implements AdminSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/login", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> AdminLogin(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> AdminLogin(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
 		String admin = params.get("admin");
@@ -49,7 +49,7 @@ public class AdminSvcImpl implements AdminSvcInt, SMSLogger
 				model	=	(AdminModel) map.get("adminModel");
 			
 				AdminSessionValidator sessionObject	=	new AdminSessionValidator();
-				sessionObject.createSession(model, httpSession);
+				sessionObject.createSession(model, session);
 				
 			}
 			map.remove("adminModel");

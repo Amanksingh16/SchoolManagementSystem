@@ -11,17 +11,19 @@ import org.springframework.stereotype.Component;
 import kmsg.sms.admin.model.School;
 import kmsg.sms.common.Constants;
 import kmsg.sms.common.SMSLogger;
+import kmsg.sms.common.Util;
 
 @Component
 public class RedisSession implements SMSLogger
 {
 	public String MESSAGE = "You are not logged in";
 	public String MESSAGE2 = "Your Session is expired, login again";
+	public String MESSAGE3 = "Invalid User Request";
 	
     @Autowired
     private RedisOperations op;
 	
-	public boolean createSession(School school,String sessionId, String ipAddress)
+	public String createSession(School school,String sessionId, String ipAddress)
 	{
 		RedisData data = new RedisData();
     	
@@ -32,35 +34,53 @@ public class RedisSession implements SMSLogger
     	data.setLoginTime(new Date().toString());
     	data.setLastActiveTime(new Date().toString());
     	
-    	op.save(data, sessionId);
-    	op.putValueWithExpireTime(sessionId, data, 3, TimeUnit.HOURS);
+    	String token = Util.generateRandomTOKEN();
+    	
+    	op.save(data, token);
+    	op.putValueWithExpireTime(token, data, Constants.TOKEN_EXPIRE_TIME_MINUTES, TimeUnit.MINUTES);
+    	op.putValueWithExpireTime(sessionId, data, Constants.SESSION_EXPIRE_TIME_HOURS, TimeUnit.HOURS);
+    	
     	logger.info("Login Successfull ,school = "+school.getSchool()+", sessionId = "+sessionId+" , ipAddress = "+ipAddress);
     	
-    	return true;
+    	return token;
 	}
 	
-	public Map<String, Object> logout(String sessionId)
+	public Map<String, Object> logout(String tokenId)
 	{
 		Map<String,Object> data = new HashMap<>();
 		
-		if(op.findById(sessionId) == null)
+		if(op.findById(tokenId) == null)
 		{
 			data.put(Constants.STATUS, Constants.FAILURE);
 			data.put(Constants.MESSAGE,MESSAGE);
 			return data;	
 		}
-		op.delete(sessionId);
+		op.delete(tokenId);
 		
-		logger.info("Logout Successful ,sessionId = "+sessionId);
+		logger.info("Logout Successful ,sessionId = "+tokenId);
 		data.put(Constants.STATUS, Constants.SUCCESS);
 		data.put(Constants.MESSAGE,"Logout Successful");
 		return data;	
 	}
 
-	public Map<String, Object> validateSchoolSession(String sessionId, String currMethod) 
+	public Map<String, Object> validateSchoolSession(String sessionId,String tokenId) 
 	{
 		Map<String,Object> data = new HashMap<>();
-		if(op.findById(sessionId) == null)
+		String token = tokenId;
+		
+		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+		StackTraceElement e = stacktrace[2];
+		String methodName = e.getMethodName();
+		
+		if(token == null)
+		{
+			logger.info("Invalid Token Id ,sessionId = "+sessionId);
+			data.put(Constants.STATUS, Constants.FAILURE);
+			data.put(Constants.MESSAGE,MESSAGE3);
+			return data;			
+		}
+		
+		if(op.findById(token) == null)
 		{
 			logger.info("Not Logged In ,sessionId = "+sessionId);
 			data.put(Constants.STATUS, Constants.FAILURE);
@@ -68,13 +88,21 @@ public class RedisSession implements SMSLogger
 			return data;	
 		}
 		
+		if(op.getValue(token) == null)
+		{
+			RedisData rd = op.findById(tokenId);
+			token = Util.generateRandomTOKEN();
+	    	op.putValueWithExpireTime(token, rd, Constants.TOKEN_EXPIRE_TIME_MINUTES, TimeUnit.MINUTES);			
+		}
+		
 		if(op.getValue(sessionId) != null)
 		{
-			RedisData rd = (RedisData)op.getValue(sessionId);
+			RedisData rd = (RedisData)op.getValue(token);
 			rd.setLastActiveTime(new Date().toString());
-			op.save(rd, sessionId);
-			logger.info("Service Called "+currMethod +", sessionId = "+sessionId, " at "+rd.getLastActiveTime());
+			op.save(rd, token);
+			logger.info("Service Called "+methodName +", sessionId = "+sessionId, " at "+rd.getLastActiveTime());
 			
+			data.put("tokenId",token);
 			data.put("schoolId",rd.getSchoolId());
 			data.put("school",rd.getSchool());
 			data.put(Constants.STATUS, Constants.SUCCESS);

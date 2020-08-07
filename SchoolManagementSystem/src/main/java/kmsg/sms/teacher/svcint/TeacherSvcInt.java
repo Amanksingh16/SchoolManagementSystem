@@ -11,27 +11,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface TeacherSvcInt {
-	public Map<String, Object> saveTeacher(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response);
+	public Map<String, Object> saveTeacher(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response);
 
-	Map<String, Object> getTeacherList(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> getTeacherList(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 	
-	public Map<String, Object> getTeacher(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response);
+	public Map<String, Object> getTeacher(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response);
 
-	Map<String, Object> saveEducation(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> saveEducation(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
-	Map<String, Object> saveClass(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> saveClass(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
-	Map<String, Object> saveSubject(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> saveSubject(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
 	Map<String, Object> deleteEducation(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
-
-	Map<String, Object> saveDocument(MultipartFile file, int docTypeId, int teacherId, String docPath,
-			HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
 	Map<String, Object> deleteDocument(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
@@ -46,5 +43,12 @@ public interface TeacherSvcInt {
 			HttpServletResponse response);
 
 	Map<String, Object> getTeacherRoles(Map<String, String> params, HttpSession session, HttpServletRequest request,
+			HttpServletResponse response);
+
+	Map<String, Object> saveDocument(MultipartFile file, Map<String, String> params, int docTypeId, int teacherId,
+			String docPath, HttpSession session, HttpServletRequest request, HttpServletResponse response)
+			throws IOException;
+
+	Map<String, Object> deleteTeacherRole(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 }

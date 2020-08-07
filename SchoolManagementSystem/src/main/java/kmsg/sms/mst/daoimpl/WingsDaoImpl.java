@@ -23,10 +23,14 @@ import kmsg.sms.common.SvcStatus;
 import kmsg.sms.mst.daoint.WingsDaoInt;
 import kmsg.sms.mst.mapper.AcademicScheduleMapper;
 import kmsg.sms.mst.mapper.AcademicYearMapper;
+import kmsg.sms.mst.mapper.WingClassMapper;
+import kmsg.sms.mst.mapper.WingClassSectionMapper;
 import kmsg.sms.mst.mapper.WingSessionMapper;
 import kmsg.sms.mst.mapper.WingsMapper;
 import kmsg.sms.mst.model.AcademicSchedule;
 import kmsg.sms.mst.model.AcademicYear;
+import kmsg.sms.mst.model.WingClass;
+import kmsg.sms.mst.model.WingClassSection;
 import kmsg.sms.mst.model.WingSession;
 import kmsg.sms.mst.model.Wings;
 
@@ -76,6 +80,40 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 		
 		result.put( SvcStatus.STATUS, SvcStatus.SUCCESS);
 		result.put( "lstWings", list);
+		return result ;
+	}
+
+	public Map<String, Object> selectWing(final int wingId) {
+		Map<String, Object> result = new HashMap<>();
+		
+		final String SQL =  "SELECT wing_id,"
+				+ " wing,"
+				+ " mc1.class_id as from_std_id, "
+				+ " mc1.class_name as from_std, "
+				+ " mc2.class_id as to_std_id, "
+				+ " mc2.class_name as to_std, "
+				+ " day "
+				+ " FROM "+schoolId+"_wings w"
+				+ " JOIN mst_class mc1 ON mc1.class_id = w.from_std_id"
+				+ " JOIN mst_class mc2 ON mc2.class_id = w.to_std_id"
+				+ " WHERE w.wing_id =? ";
+
+		Wings wing ;
+		try {
+			wing = template.queryForObject( SQL, new Object[] {wingId}, new WingsMapper());
+		}
+		catch(EmptyResultDataAccessException e) {
+			logger.error("no wing found for wingId");
+			return SvcStatus.GET_FAILURE("Wing does not exist for selecting wings. Contact system admin") ;
+		}
+		catch(Exception e) {
+			logger.error("selectWing: Exception occured:" + e.getMessage());
+			e.printStackTrace();
+			return SvcStatus.GET_FAILURE("Error occured in selecting Wing. Contact system admin") ;
+		}
+		
+		result.put( SvcStatus.STATUS, SvcStatus.SUCCESS);
+		result.put( "wing", wing);
 		return result ;
 	}
 
@@ -526,4 +564,67 @@ public class WingsDaoImpl implements WingsDaoInt, SMSLogger
 			return -1 ;
 		}
 	}
+	
+	public Map<String, Object> selectWingClasses(final int fromClassId, final int toClassId) {
+		Map<String, Object> result = new HashMap<>();
+		
+		final String SQL = 
+				"SELECT"
+					+ " mc.class_id"
+					+ ", mc.class_name"
+				+ " FROM mst_class mc"
+				+ " WHERE mc.class_id >= ?"
+				+ " AND mc.class_id <= ?";
+
+		List<WingClass> list = new ArrayList<>();
+		try {
+			list = template.query( SQL,new Object[] { fromClassId, toClassId}, new WingClassMapper());
+			if(list.size() == 0) {
+				result.put( SvcStatus.STATUS, SvcStatus.FAILURE);
+				result.put( SvcStatus.MSG, "No classes exist for this wing");
+				return result;
+			}
+		}
+		catch(Exception e) {
+			logger.error("Exception: selectWingClasses error occured:" + e.getMessage());
+			e.printStackTrace();
+			return SvcStatus.GET_FAILURE("Error occured in selecting Wing Classes. Contact system admin") ;
+		}
+		
+		result.put( SvcStatus.STATUS, SvcStatus.SUCCESS);
+		result.put( "lstWingClass", list);
+		return result ;
+	}
+
+	public Map<String, Object> selectClassSections(final int classId ) {
+		Map<String, Object> result = new HashMap<>();
+		
+		final String SQL = 
+				"SELECT"
+					+ " cs.class_section_id"
+					+ ", cs.section"
+					+ ", cs.class_teacher_id"
+				+ " FROM " + schoolId + "_class_section cs"
+				+ " WHERE cs.class_id = ?" ;
+
+		List<WingClassSection> list = new ArrayList<>();
+		try {
+			list = template.query( SQL,new Object[] { classId }, new WingClassSectionMapper());
+			if(list.size() == 0) {
+				result.put( SvcStatus.STATUS, SvcStatus.FAILURE);
+				result.put( SvcStatus.MSG, "No sections exist for this class");
+				return result;
+			}
+		}
+		catch(Exception e) {
+			logger.error("Exception: selectWingClasseSection error occured:" + e.getMessage());
+			e.printStackTrace();
+			return SvcStatus.GET_FAILURE("Error occured in selecting Wing Class Sections. Contact system admin") ;
+		}
+		
+		result.put( SvcStatus.STATUS, SvcStatus.SUCCESS);
+		result.put( "lstClassSection", list);
+		return result ;
+	}
+
 }

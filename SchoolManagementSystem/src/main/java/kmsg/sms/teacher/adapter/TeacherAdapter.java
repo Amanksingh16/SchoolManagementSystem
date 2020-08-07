@@ -18,6 +18,7 @@ import kmsg.sms.common.SMSLogger;
 import kmsg.sms.common.SvcStatus;
 import kmsg.sms.teacher.daoimpl.TeacherDaoImpl;
 import kmsg.sms.teacher.model.ManageTeacher;
+import kmsg.sms.teacher.model.SchoolTeacher;
 import kmsg.sms.teacher.model.SchoolTeacherClassModel;
 import kmsg.sms.teacher.model.SchoolTeacherClassSubjectModel;
 import kmsg.sms.teacher.model.TeacherClassModel;
@@ -51,15 +52,29 @@ public class TeacherAdapter implements SMSLogger {
 		catch(Exception e) {
 			e.printStackTrace();
 			map.put(SvcStatus.STATUS,SvcStatus.FAILURE);
-			map.put(SvcStatus.MSG, "Exception Occured in data of Teacher Role");
+			map.put(SvcStatus.MSG, "Exception Occured in data of Teacher Role for add");
 			return map;
 		}
 		
 		return dao.insertTeacherRole(model);
 	}
-	
-	public Map<String, Object> getTeacherRoles(int teacherId) {
-		return dao.selectTeacherRoles(teacherId);
+
+	public Map<String, Object> deleteTeacherRole(String strTeacherRole) {
+		
+		Map<String,Object> map = new HashMap<>();
+		TeacherRole model = new TeacherRole();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			model = mapper.readValue(strTeacherRole, TeacherRole.class);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			map.put(SvcStatus.STATUS,SvcStatus.FAILURE);
+			map.put(SvcStatus.MSG, "Exception Occured in data of Teacher Role for delete");
+			return map;
+		}
+		
+		return dao.deleteTeacherRole(model);
 	}
 	
 	public Map<String, Object> addTeacher(String teacher) { 
@@ -91,14 +106,28 @@ public class TeacherAdapter implements SMSLogger {
 		return dao.getTeacherList();
 	}
 
-	public Map<String, Object> getTeacher(int teacherId)
-	{
+	public Map<String, Object> getTeacher(String schoolTeacher) {
 		Map<String,Object> map = new HashMap<>();
+		SchoolTeacher model = new SchoolTeacher ();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			model = mapper.readValue(schoolTeacher, SchoolTeacher.class);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			map.put(SvcStatus.STATUS,SvcStatus.FAILURE);
+			map.put(SvcStatus.MSG,"Exception Occured in getting Teacher");
+			return map;
+		}
 		
 		map.put("SvcStatus", SvcStatus.SUCCESS);
-		map.put("teacher", dao.getTeacher(teacherId));
+		map.put("teacher", dao.getTeacher(model.getTeacherId()));
 		return map;
 		
+	}
+
+	public Map<String, Object> getTeacherRoles(int teacherId) {
+		return dao.selectTeacherRoles(teacherId);
 	}
 
 	public Map<String, Object> getTeacherDocsList(int teacherId) {
@@ -106,8 +135,7 @@ public class TeacherAdapter implements SMSLogger {
 	}
 
 	public Map<String, Object> getTeacherClassList(int teacherId) {
-		return dao.getTeacherClassList(teacherId);
-		
+		return dao.getTeacherClassList(teacherId);	
 	}
 
 	public Map<String, Object> getTeacherSubjectList(String schoolTeacherClass) {

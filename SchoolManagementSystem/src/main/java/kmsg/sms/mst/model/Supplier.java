@@ -14,6 +14,8 @@ public class Supplier {
 	private String address2;
 	private int stateId;
 	private int cityId;
+	private String state;
+	private String city;
 	private String gstin;
 	private String category;
 	private boolean blocked;
@@ -107,6 +109,18 @@ public class Supplier {
 	}
 	public void setBlocked(boolean blocked) {
 		this.blocked = blocked;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
 	}
 	
 }

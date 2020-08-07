@@ -17,6 +17,8 @@ public interface TeacherDaoInt {
 
 	Map<String, Object> getTeacherSubjectList(SchoolTeacherClassModel model);
 
+	Map<String, Object> selectTeacherRoles(int teacherId);
+
 	Map<String, Object> updateDocument(TeacherDocModel model);
 
 	Map<String, Object> saveDocument(TeacherDocModel model);
@@ -51,5 +53,5 @@ public interface TeacherDaoInt {
 
 	Map<String, Object> insertTeacherRole(TeacherRole model);
 
-	Map<String, Object> selectTeacherRoles(int teacherId);
+	Map<String, Object> deleteTeacherRole(TeacherRole model);
 }

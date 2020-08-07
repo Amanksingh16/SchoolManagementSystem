@@ -31,14 +31,15 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> listWing(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> listWing(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId = (int)map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			
@@ -49,14 +50,15 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveWing(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> saveWing(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String wings = params.get("wings");
@@ -68,14 +70,15 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/ses/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> listWingSessions(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> listWingSessions(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId = (int)map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String wingId = params.get("wingId");
@@ -86,14 +89,15 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/ses/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveWingSessions(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> saveWingSessions(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String wingSession = params.get("wingSession");
@@ -105,14 +109,15 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/year/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> listAcademicYear(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> listAcademicYear(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String wingId = params.get("wingId");
@@ -124,14 +129,15 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/year/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveAcademicYear(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> saveAcademicYear(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String wings = params.get("academicYear");
@@ -143,14 +149,15 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/sch/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> listAcademicSchedule(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> listAcademicSchedule(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String wingId = params.get("wingId");
@@ -163,19 +170,54 @@ public class WingsSvcImpl implements WingsSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/sch/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveAcademicSchedule(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> saveAcademicSchedule(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String academicSchedule = params.get("academicSchedule");
 			
 			return adapter.addAcademicSchedule(academicSchedule);
+		}
+		return map;
+	}
+
+	@Override
+	@RequestMapping(value="/cls/list", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> getWingsClasses(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		Map<String,Object> map = new HashMap<>();
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId=(int) map.get("schoolId");
+			int wingId=Integer.parseInt( params.get("wingId"));
+			adapter.setSchoolId(schoolId);
+			return adapter.getClasses(wingId);
+		}
+		return map;
+	}
+
+	@Override
+	@RequestMapping(value="/cls/section/list", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> getWingsClassesSections(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		Map<String,Object> map = new HashMap<>();
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId=(int) map.get("schoolId");
+			int classId=Integer.parseInt(params.get("classId"));
+			adapter.setSchoolId(schoolId);
+			return adapter.getClassSections(classId);
 		}
 		return map;
 	}

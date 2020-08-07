@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -57,12 +56,12 @@ public class SubItemDaoImpl implements SubItemDaoInt, SMSLogger{
 		List<SubItem> list = new ArrayList<>();
 		try {
 			list = template.query(SQL,new Object[] {itemId}, new SubItemMapper());
+			if(list.size()==0)
+			{
+				logger.error("selectSubItems: No SubItems found for this item");
+				return SvcStatus.GET_FAILURE("No SubItems found for this item");
+			}
 		} 
-		catch (EmptyResultDataAccessException e) {
-			System.out.println(e);
-			logger.error("selectSubItem: No Sub Item found");
-			return SvcStatus.GET_FAILURE("No Sub Item found. Contact System admin");
-		}
 		catch (Exception e) {
 			System.out.println(e);
 			logger.error("selectSubItem: Exception in selecting Sub Item " + e);
@@ -123,7 +122,6 @@ public class SubItemDaoImpl implements SubItemDaoInt, SMSLogger{
 	@Override
 	public Map<String, Object> updateSubItem(SubItem model) {
 		
-
 		final String SQL =
 				"UPDATE "+schoolId+"_mst_sub_item SET item_id = ? ,"
 				+ " child_item_id=?, "
@@ -137,7 +135,7 @@ public class SubItemDaoImpl implements SubItemDaoInt, SMSLogger{
 							model.getItemId(),
 							model.getChildItemId(),
 							model.getQty(),
-							
+							model.getSubItemId(),
 					} );
 			}
 			catch(DuplicateKeyException e) {
@@ -162,4 +160,38 @@ public class SubItemDaoImpl implements SubItemDaoInt, SMSLogger{
 	}
 
 
+	public Map<String, Object> getAllSubItemList() 
+	{
+		final String SQL = 
+				"SELECT msi.sub_item_id,"
+				+ " msi.item_id,"
+				+ " msi.child_item_id,"
+				+ " msi.qty, "
+				+ " mi.item,"
+				+ " mi.unit, "
+				+ " mi.item_code,"
+				+ " mi.rate "
+				+ " FROM "+schoolId+"_mst_sub_item msi "
+				+ " JOIN "+schoolId+"_mst_items mi ON mi.item_id = msi.child_item_id";
+				
+		List<SubItem> list = new ArrayList<>();
+		try {
+			list = template.query(SQL, new SubItemMapper());
+			if(list.size()==0)
+			{
+				logger.error("selectSubItems: No SubItems found");
+				return SvcStatus.GET_FAILURE("No SubItems found");
+			}
+		} 
+		catch (Exception e) {
+			System.out.println(e);
+			logger.error("selectSubItem: Exception in selecting Sub Item " + e);
+			return SvcStatus.GET_FAILURE("Error occured in selecting Sub Item. Contact System admin");
+		}
+		
+		Map<String, Object> result = new HashMap<>();
+		result.put(SvcStatus.STATUS, SvcStatus.SUCCESS);
+		result.put("lstAllSubItem",  list );
+		return result ;
+	}
 }

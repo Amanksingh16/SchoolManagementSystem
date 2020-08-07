@@ -34,14 +34,13 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	@RequestMapping(value="/list", method = RequestMethod.POST, headers="Accept=application/json")
 	public Map<String, Object> getTeacherList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
-		
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			return adapter.getTeacherList();
@@ -53,18 +52,17 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	@RequestMapping(value="/get", method = RequestMethod.POST, headers="Accept=application/json")
 	public Map<String, Object> getTeacher(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
-		
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
-			String schoolTeacher = params.get("teacherId");
-			return adapter.getTeacher(Integer.parseInt(schoolTeacher));
+			String schoolTeacher = params.get("schoolTeacher");
+			return adapter.getTeacher(schoolTeacher);
 		}
 		return map;
 	}
@@ -74,11 +72,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> saveTeacher(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String teacher = params.get("teacher");
@@ -92,11 +91,11 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> getTeacherRoles(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 		
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String schoolTeacher = params.get("teacherId");
@@ -109,11 +108,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	@RequestMapping(value="/save_role", method = RequestMethod.POST, headers="Accept=application/json")
 	public Map<String, Object> saveTeacherRole(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String strTeacherRole = params.get("teacherRole");
@@ -121,17 +121,35 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 		}
 		return map;
 	}
-	
+
+	@Override
+	@RequestMapping(value="/delete_role", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> deleteTeacherRole(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		Map<String,Object> map = new HashMap<>();
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId=(int) map.get("schoolId");
+			adapter.setSchoolId(schoolId);
+			String strTeacherRole = params.get("teacherRole");
+			return adapter.deleteTeacherRole( strTeacherRole);
+		}
+		return map;
+	}
+
 	@RequestMapping(value="/docslist", method = RequestMethod.POST, headers="Accept=application/json")
 	public Map<String, Object> getDocList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+
 		String schoolTeacher = params.get("teacherId");
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			return adapter.getTeacherDocsList(Integer.parseInt(schoolTeacher));
@@ -142,12 +160,13 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> getSubjectList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+
 		String schoolTeacherClass = params.get("schoolTeacherClass");
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			return adapter.getTeacherSubjectList(schoolTeacherClass);
@@ -159,12 +178,13 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> getClassList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+
 		String schoolTeacher = params.get("teacherId");
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			return adapter.getTeacherClassList(Integer.parseInt(schoolTeacher));
@@ -176,12 +196,13 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> getEducationList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+
 		String schoolTeacher = params.get("teacherId");
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			return adapter.getTeacherEducationList(Integer.parseInt(schoolTeacher));
@@ -191,14 +212,15 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 
 	@Override
 	@RequestMapping(value="/savedoc", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveDocument(@RequestParam(value = "file",required=true) MultipartFile file,@RequestParam("docTypeId") int docTypeId,@RequestParam("teacherId") int teacherId,@RequestParam("docPath") String docPath, HttpSession session,HttpServletRequest request, HttpServletResponse response) throws IOException 
+	public Map<String, Object> saveDocument(@RequestParam(value = "file",required=true) MultipartFile file,@RequestParam Map<String, String> params,@RequestParam("docTypeId") int docTypeId,@RequestParam("teacherId") int teacherId,@RequestParam("docPath") String docPath, HttpSession session,HttpServletRequest request, HttpServletResponse response) throws IOException 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			return adapter.addDocument(file,schoolId,docTypeId,teacherId,docPath);
@@ -211,11 +233,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> saveEducation(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			String teacherEducation = params.get("teacherEducation");
 			return adapter.addEducation(teacherEducation);
 		}
@@ -228,11 +251,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> saveClass(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String teacherClass = params.get("teacherClass");
@@ -246,11 +270,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String, Object> saveSubject(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String teacherSubject = params.get("teacherSubject");
@@ -264,11 +289,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String,Object> deleteEducation(@RequestParam Map<String, String> params, HttpSession session, HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			String teacherEducation = params.get("teacherEducation");
 			return adapter.deleteEducation(teacherEducation);		
 		}
@@ -280,11 +306,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String,Object> deleteDocument(@RequestParam Map<String, String> params, HttpSession session, HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			String teacherDocument = params.get("teacherDocument");
 			return adapter.deleteDocument(teacherDocument);
 		}
@@ -296,11 +323,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String,Object> deleteSubject(@RequestParam Map<String, String> params, HttpSession session, HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			String teacherSubject = params.get("teacherSubject");
 			return adapter.deleteSubject(teacherSubject);
 		}
@@ -312,11 +340,12 @@ public class TeacherSvcImpl implements TeacherSvcInt{
 	public Map<String,Object> deleteClass(@RequestParam Map<String, String> params, HttpSession session, HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(session.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			String teacherClass = params.get("teacherClass");
 			return adapter.deleteClass(teacherClass);
 		}

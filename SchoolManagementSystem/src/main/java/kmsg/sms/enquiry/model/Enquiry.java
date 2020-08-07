@@ -5,6 +5,7 @@ import kmsg.sms.mst.model.Classes;
 public class Enquiry {
 	private int enquiryId;
 	private String enquiryNo;
+	private String enquiryDt;
 	private String enquiry ;
 	private String gender ;
 	private int age;
@@ -123,5 +124,10 @@ public class Enquiry {
 	public void setRegsNo(String regsNo) {
 		this.regsNo = regsNo;
 	}
-
+	public String getEnquiryDt() {
+		return enquiryDt;
+	}
+	public void setEnquiryDt(String enquiryDt) {
+		this.enquiryDt = enquiryDt;
+	}
 }

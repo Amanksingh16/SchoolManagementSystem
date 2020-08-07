@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -51,23 +50,27 @@ public class SupplierDaoImpl implements SupplierDaoInt, SMSLogger{
 				+ " business_name,"
 				+ " address_1,"
 				+ " address_2,"
-				+ " state_id,"
-				+ " city_id,"
+				+ " ms.state_id,"
+				+ " mc.city_id,"
+				+ " ms.state,"
+				+ " mc.city,"
 				+ " gstin,"
 				+ " category,"
 				+ " blocked"
-				+ " FROM supplier"
+				+ " FROM supplier s"
+				+ " LEFT JOIN mst_state ms ON s.state_id = ms.state_id"
+				+ " LEFT JOIN mst_city mc ON s.city_id = mc.city_id"
 				+ " WHERE school_id = ?";
 		
 		List<Supplier> list = new ArrayList<>();
 		try {
 			list = template.query(SQL,new Object[] {schoolId}, new SupplierMapper());
+			if(list.size()==0)
+			{
+				logger.error("selectSupplier: No supplier found");
+				return SvcStatus.GET_FAILURE("No Supplier found");
+			}
 		} 
-		catch (EmptyResultDataAccessException e) {
-			System.out.println(e);
-			logger.error("selectSupplier: No Supplier found");
-			return SvcStatus.GET_FAILURE("No Supplier found. Contact System admin");
-		}
 		catch (Exception e) {
 			System.out.println(e);
 			logger.error("selectSupplier: Exception in selecting Supplier " + e);
@@ -119,7 +122,7 @@ public class SupplierDaoImpl implements SupplierDaoInt, SMSLogger{
 			}
 			catch(DuplicateKeyException e) {
 				logger.error("insertSupplier : Duplicate Key insertSupplier:" + model.getSupplierId());
-				return SvcStatus.GET_FAILURE("Supplier already exist" +  model.getSupplierId());
+				return SvcStatus.GET_FAILURE("Supplier already exist " +  model.getSupplierId());
 			}
 			catch(Exception e) {
 				e.printStackTrace();
@@ -154,7 +157,7 @@ public class SupplierDaoImpl implements SupplierDaoInt, SMSLogger{
 				+ " city_id=?,"
 				+ " gstin=?, "
 				+ " category=?, "
-				+ " bocked=?"
+				+ " blocked=?"
 				+ " WHERE supplier_id = ?";
 		
 	    int count = 0;
@@ -207,9 +210,9 @@ public class SupplierDaoImpl implements SupplierDaoInt, SMSLogger{
 	}
 	
 	@Override
-	public boolean forgotPassword(String email, String originalPwdHash, String salt) 
+	public int forgotPassword(String email, String originalPwdHash, String salt) 
 	{
-		String sql = " UPDATE supplier SET password = ?,salt = ? WHERE email = ? ";
-		return template.update(sql, new Object[] {originalPwdHash, salt, email})==1;
+		String sql = "UPDATE supplier SET password = ?,salt = ? WHERE email = ? ";
+		return template.update(sql, new Object[] {originalPwdHash, salt, email});
 	}
 }

@@ -35,7 +35,7 @@ public class SchoolSvcImpl implements SchoolSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/add", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> CreateSchool(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> CreateSchool(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 		logger.info(CurrMethod+" service called at "+Util.Now());
@@ -46,7 +46,7 @@ public class SchoolSvcImpl implements SchoolSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/create", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> CreateSchoolSystem(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> CreateSchoolSystem(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 		logger.info(CurrMethod+" service called at "+Util.Now());
@@ -57,7 +57,7 @@ public class SchoolSvcImpl implements SchoolSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/sendphoneotp", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> SendPhoneOTP(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> SendPhoneOTP(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 		logger.info(CurrMethod+" service called at "+Util.Now());
@@ -68,7 +68,7 @@ public class SchoolSvcImpl implements SchoolSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/verifyphone", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> VerifyPhone(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> VerifyPhone(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 		logger.info(CurrMethod+" service called at "+Util.Now());
@@ -97,12 +97,8 @@ public class SchoolSvcImpl implements SchoolSvcInt, SMSLogger
 			if("Success".equals(svcstatus))
 			{
 				obj	=	(School) map.get("schoolModel");
-				if(!ses.createSession(obj, session.getId(), request.getRemoteAddr()))
-				{
-					map.put(Constants.STATUS,Constants.FAILURE);
-					map.put(Constants.MESSAGE,msg);
-					return map;
-				}
+				String token = ses.createSession(obj, session.getId(), request.getRemoteAddr());
+				response.setHeader("tokenId", token);
 			}
 			map.remove("schoolModel");
 			return map;
@@ -163,9 +159,9 @@ public class SchoolSvcImpl implements SchoolSvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value = "/logout" , method = RequestMethod.GET)
-	public Map<String, Object> logout(HttpSession session, HttpServletRequest request, HttpServletResponse response)
+	public Map<String, Object> logout(@RequestParam Map<String, String> params,HttpSession session, HttpServletRequest request, HttpServletResponse response)
 	{		
-		return ses.logout(session.getId());
+		return ses.logout(params.get("tokenId"));
 	}
 	
 }

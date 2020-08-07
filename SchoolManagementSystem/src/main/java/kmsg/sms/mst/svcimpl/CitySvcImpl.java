@@ -29,16 +29,16 @@ public class CitySvcImpl implements CitySvcInt
 	RedisSession ses;
 	
 	@RequestMapping(value="/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getClassList(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> getCityList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
-			return adapter.getCityList();
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			String stateId = params.get("stateId");
+			return adapter.getCityList(stateId);
 		}
 		return map;
 	}

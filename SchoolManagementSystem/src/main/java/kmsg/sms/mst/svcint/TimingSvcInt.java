@@ -8,16 +8,16 @@ import javax.servlet.http.HttpSession;
 
 public interface TimingSvcInt {
 
-	Map<String, Object> getTimingList(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> getTimingList(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
-	Map<String, Object> saveTiming(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> saveTiming(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
-	Map<String, Object> saveTimingPeriod(Map<String, String> params, HttpSession httpSession,
+	Map<String, Object> saveTimingPeriod(Map<String, String> params, HttpSession session,
 			HttpServletRequest request, HttpServletResponse response);
 
-	Map<String, Object> getTimingPeriodList(Map<String, String> params, HttpSession httpSession,
+	Map<String, Object> getTimingPeriodList(Map<String, String> params, HttpSession session,
 			HttpServletRequest request, HttpServletResponse response);
 
 }

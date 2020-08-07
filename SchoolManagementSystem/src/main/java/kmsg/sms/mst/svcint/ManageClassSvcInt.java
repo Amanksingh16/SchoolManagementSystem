@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSession;
 
 public interface ManageClassSvcInt {
 
-	Map<String, Object> saveClassSection(Map<String, String> params, HttpSession httpSession,
+	Map<String, Object> saveClassSection(Map<String, String> params, HttpSession session,
 			HttpServletRequest request, HttpServletResponse response);
 
 }

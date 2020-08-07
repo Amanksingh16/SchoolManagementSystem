@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -48,8 +47,8 @@ public class ItemsDaoImpl implements ItemsDaoInt, SMSLogger{
 				+ " unit,"
 				+ " rate,"
 				+ " opening_bal,"
-				+ " DATE_FORMAT(opening_bal_dt,'%d-%m-%y') as opening_bal_dt,"
-				+ " DATE_FORMAT(expiry_dt,'%d-%m-%y') as expiry_dt,"
+				+ " DATE_FORMAT(opening_bal_dt,'%d-%m-%Y') as opening_bal_dt,"
+				+ " DATE_FORMAT(expiry_dt,'%d-%m-%Y') as expiry_dt,"
 				+ " min_qty,"
 				+ " has_sub_items"
 				+ " FROM "+schoolId+"_mst_items";
@@ -57,12 +56,12 @@ public class ItemsDaoImpl implements ItemsDaoInt, SMSLogger{
 		List<Items> list = new ArrayList<>();
 		try {
 			list = template.query(SQL, new ItemsMapper());
+			if(list.size()==0)
+			{
+				logger.error("selectItem: No Items found");
+				return SvcStatus.GET_FAILURE("No Items found");
+			}
 		} 
-		catch (EmptyResultDataAccessException e) {
-			System.out.println(e);
-			logger.error("selectItem: No Item found");
-			return SvcStatus.GET_FAILURE("No Item found. Contact System admin");
-		}
 		catch (Exception e) {
 			System.out.println(e);
 			logger.error("selectItem: Exception in selecting Item " + e);
@@ -79,7 +78,7 @@ public class ItemsDaoImpl implements ItemsDaoInt, SMSLogger{
 	public Map<String, Object> saveItem(Items model) {
 		
 		final String SQL = "INSERT INTO "+schoolId+"_mst_items(item_code, item, des, unit, rate, opening_bal, opening_bal_dt, expiry_dt, min_qty, has_sub_items)"
-				+ "VALUES (?,?,?,?,?,?,STR_TO_DATE(?,%d-%m-%y),STR_TO_DATE(?,%d-%m-%y),?,?)";
+				+ " VALUES (?,?,?,?,?,?,STR_TO_DATE(?,'%d-%m-%Y'),STR_TO_DATE(?,'%d-%m-%Y'),?,?)";
 		
 		 int count = 0;
 			KeyHolder holder = new GeneratedKeyHolder();
@@ -100,8 +99,8 @@ public class ItemsDaoImpl implements ItemsDaoInt, SMSLogger{
 							ps.setInt( 6, model.getOpeningBalance());
 							ps.setString( 7, model.getOpeningBalanceDate());
 							ps.setString(8, model.getExpiryDate());
-							ps.setInt( 8, model.getMinQty());
-							ps.setBoolean( 9, model.isHasSubItems());
+							ps.setInt( 9, model.getMinQty());
+							ps.setBoolean( 10, model.isHasSubItems());
 								
 							return ps ;
 						}
@@ -137,8 +136,8 @@ public class ItemsDaoImpl implements ItemsDaoInt, SMSLogger{
 				+ "unit=?,"
 				+ "rate=?,"
 				+ "opening_bal=?,"
-				+ "opening_bal_dt=STR_TO_DATE(?,%d-%m-%y),"
-				+ "expiry_dt=STR_TO_DATE(?,%d-%m-%y),"
+				+ "opening_bal_dt=STR_TO_DATE(?,'%d-%m-%Y'),"
+				+ "expiry_dt=STR_TO_DATE(?,'%d-%m-%Y'),"
 				+ "min_qty=?,"
 				+ "has_sub_items=?"
 				+ " WHERE item_id = ?";
@@ -156,7 +155,8 @@ public class ItemsDaoImpl implements ItemsDaoInt, SMSLogger{
 							model.getOpeningBalanceDate(),
 							model.getExpiryDate(),
 							model.getMinQty(),
-							
+							model.isHasSubItems(),
+							model.getItemId()
 					} );
 			}
 			catch(DuplicateKeyException e) {
@@ -179,7 +179,4 @@ public class ItemsDaoImpl implements ItemsDaoInt, SMSLogger{
 				return SvcStatus.GET_FAILURE("Item could not be updated. Contact System Admin");
 			}
 	}
-	
-	
-
 }

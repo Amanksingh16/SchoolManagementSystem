@@ -37,7 +37,7 @@ public class ItemsAdapter {
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			return SvcStatus.GET_FAILURE("Exception occurred in saving building.");
+			return SvcStatus.GET_FAILURE("Exception occurred in saving item.");
 		}
 		if(model.getItemId() == 0)
 		{

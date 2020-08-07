@@ -9,5 +9,5 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public interface RolesSvcInt {
-	public Map<String, Object> getRoles(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response);
+	public Map<String, Object> getRoles(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response);
 }

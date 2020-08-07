@@ -26,6 +26,8 @@ public class SupplierMapper implements RowMapper<Supplier>{
 		model.setAddress2(rs.getString("address_2"));
 		model.setStateId(rs.getInt("state_id"));
 		model.setCityId(rs.getInt("city_id"));
+		model.setState(rs.getString("state"));
+		model.setCity(rs.getString("city"));
 		model.setGstin(rs.getString("gstin"));
 		model.setCategory(rs.getString("category"));
 		model.setBlocked(rs.getBoolean("blocked"));

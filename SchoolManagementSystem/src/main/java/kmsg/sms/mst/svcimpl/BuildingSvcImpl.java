@@ -35,15 +35,16 @@ public class BuildingSvcImpl implements BuildingSvcInt,SMSLogger
 	RedisSession ses;
 	
 	@RequestMapping(value="/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getBuildingList(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> getBuildingList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId = (int)map.get("schoolId");
+			adapter.setSchoolId(schoolId);
 			return adapter.getBuildingList();
 		}
 		return map;
@@ -51,14 +52,17 @@ public class BuildingSvcImpl implements BuildingSvcInt,SMSLogger
 	
 	@Override
 	@RequestMapping(value="/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> BuildingSave(@RequestParam(value = "buildingFile",required=false) MultipartFile file,@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) throws IOException 
+	public Map<String, Object> BuildingSave(@RequestParam(value = "buildingFile",required=false) MultipartFile file,@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) throws IOException 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId = (int)map.get("schoolId");
+			adapter.setSchoolId(schoolId);
 			String building = params.get("building");
 			return adapter.addBuilding(building,file);
 		}
@@ -67,7 +71,7 @@ public class BuildingSvcImpl implements BuildingSvcInt,SMSLogger
 	
 	@Override
 	@RequestMapping(value="/viewimg", method = RequestMethod.GET, headers="Accept=application/json")
-	public Map<String, Object> ViewBuildingImage(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> ViewBuildingImage(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
 	
@@ -96,16 +100,19 @@ public class BuildingSvcImpl implements BuildingSvcInt,SMSLogger
 	
 	@Override
 	@RequestMapping(value="/rooms/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getBuildingRoomsList(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> getBuildingRoomsList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+
 		String buildingId = params.get("buildingId");
 
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId = (int)map.get("schoolId");
+			adapter.setSchoolId(schoolId);
 			return adapter.getBuildingRoomsList(Integer.parseInt(buildingId));
 		}
 		return map;
@@ -113,14 +120,17 @@ public class BuildingSvcImpl implements BuildingSvcInt,SMSLogger
 	
 	@Override
 	@RequestMapping(value="/rooms/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> BuildingRoomsSave(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) throws IOException 
+	public Map<String, Object> BuildingRoomsSave(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) throws IOException 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId = (int)map.get("schoolId");
+			adapter.setSchoolId(schoolId);
 			String building = params.get("buildingRoom");
 			return adapter.addBuildingRoom(building);
 		}

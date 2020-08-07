@@ -16,5 +16,5 @@ public interface SupplierDaoInt {
 
 	int getId(String emailId);
 
-	boolean forgotPassword(String email, String originalPwdHash, String salt);
+	int forgotPassword(String email, String originalPwdHash, String salt);
 }

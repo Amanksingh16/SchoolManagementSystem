@@ -41,7 +41,7 @@ public class SupplierAdapter implements SMSLogger
 	{	
 		Supplier model = new Supplier();
 		ObjectMapper mapper = new ObjectMapper();
-		try {
+		try {	
 			model = mapper.readValue(supplier, Supplier.class);
 		}
 		catch(Exception e)
@@ -63,7 +63,7 @@ public class SupplierAdapter implements SMSLogger
 		
 		try
 		{
-			if(dao.forgotPassword(userEmail,originalPwdHash,salt))
+			if(dao.forgotPassword(userEmail,originalPwdHash,salt)>0)
 			{
 				int schoolId = dao.getId(userEmail);
 				

@@ -44,4 +44,9 @@ public class SubItemAdapter {
 		else
 			return dao.updateSubItem(model);
 	}
+
+	public Map<String, Object> getAllSubItemList() 
+	{
+		return dao.getAllSubItemList();	
+	}
 }

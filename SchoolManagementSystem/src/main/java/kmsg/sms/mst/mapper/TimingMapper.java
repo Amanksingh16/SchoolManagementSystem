@@ -14,11 +14,12 @@ public class TimingMapper implements RowMapper<Timing>
 	{
 		Timing model = new Timing();
 		model.setTimingId(rs.getInt("timing_id"));
-		model.setEffectiveDt(rs.getString("effective_dt"));
+		model.setEffectiveDt(rs.getString("effective_from_dt"));
 		model.setStartTm(rs.getString("start_tm"));
 		model.setEndTm(rs.getString("end_tm"));
 		model.setWingId(rs.getInt("wing_id"));
 		model.setWing(rs.getString("wing"));
+		model.setPeriods(rs.getInt("periods"));
 		return model;
 	}
 }

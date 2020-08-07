@@ -9,7 +9,7 @@ public class SubItem {
 	private String itemCode;
 	private int qty;
 	private float rate;
-	private int unit;
+	private String unit;
 	
 	public int getSubItemId() {
 		return subItemId;
@@ -53,10 +53,10 @@ public class SubItem {
 	public void setRate(float rate) {
 		this.rate = rate;
 	}
-	public int getUnit() {
+	public String getUnit() {
 		return unit;
 	}
-	public void setUnit(int unit) {
+	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 }

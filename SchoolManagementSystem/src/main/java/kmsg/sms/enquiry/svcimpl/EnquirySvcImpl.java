@@ -31,12 +31,13 @@ public class EnquirySvcImpl implements EnquirySvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> listEnquiry(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) {
+	public Map<String, Object> listEnquiry(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
-		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {	
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId = (int)map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			
@@ -47,18 +48,92 @@ public class EnquirySvcImpl implements EnquirySvcInt, SMSLogger
 	
 	@Override
 	@RequestMapping(value="/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveEnquiry(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> saveEnquiry(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId( schoolId);
 			String strEnquiry = params.get("enquiry");
 			
 			return adapter.saveEnquiry(strEnquiry);
+		}
+		return map;
+	}
+	
+	@Override
+	@RequestMapping(value="/register", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> registerEnquiry(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
+	{
+		Map<String,Object> map = new HashMap<>();
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId=(int) map.get("schoolId");
+			adapter.setSchoolId( schoolId);
+			String enquiryId = params.get("enquiryId");
+			String regsNo = params.get("regsNo");
+			
+			return adapter.registerEnquiry(enquiryId,regsNo);
+		}
+		return map;
+	}
+	
+	@Override
+	@RequestMapping(value="/conversion", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> ConversionGraph(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		Map<String,Object> map = new HashMap<>();
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId = (int)map.get("schoolId");
+			String year = params.get("year");
+			adapter.setSchoolId(schoolId);
+			
+			return adapter.ConversionGraph(year);
+		}
+		return map;
+	}
+	
+	@Override
+	@RequestMapping(value="/yearcomparison", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> YearComparisonGraph(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		Map<String,Object> map = new HashMap<>();
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId = (int)map.get("schoolId");
+			adapter.setSchoolId(schoolId);
+			
+			return adapter.YearComparisonGraph();
+		}
+		return map;
+	}
+	
+	@Override
+	@RequestMapping(value="/classcomparison", method = RequestMethod.POST, headers="Accept=application/json")
+	public Map<String, Object> ClassComparisonGraph(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
+		Map<String,Object> map = new HashMap<>();
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
+		
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
+			int schoolId = (int)map.get("schoolId");
+			adapter.setSchoolId(schoolId);
+			String wingId = params.get("wingId");
+			
+			return adapter.ClassComparisonGraph(wingId,schoolId);
 		}
 		return map;
 	}

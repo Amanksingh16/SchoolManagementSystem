@@ -45,10 +45,10 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 		String SQL = " SELECT w.wing_id,"
 				+ "w.wing,"
 				+ "tm.timing_id,"
-				+ "tm.effective_dt," + 
+				+ "DATE_FORMAT(tm.effective_from_dt,'%d-%m-%Y') as effective_from_dt," + 
 				" tm.periods," + 
 				" DATE_FORMAT(tm.start_tm,'%H:%i') as start_tm," + 
-				" DATE_FORMAT(tm.end_tm,'%H:%i') as end_tm," + 
+				" IFNULL(DATE_FORMAT(tm.end_tm,'%H:%i'),'') as end_tm" + 
 				" FROM "+schoolId+"_mst_timing tm" + 
 				" LEFT JOIN "+schoolId+"_wings w ON w.wing_id = tm.wing_id";
 				
@@ -76,7 +76,7 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 
 	public Map<String, Object> saveTiming(Timing model) 
 	{
-		final String SQL = "INSERT INTO "+schoolId+"_mst_timing (effective_dt,start_tm, wing_session_id) VALUES (STR_TO_DATE(?,'%d-%m-%Y'),STR_TO_DATE(?,'%H:%i'),?)";
+		final String SQL = "INSERT INTO "+schoolId+"_mst_timing (effective_from_dt,start_tm, wing_id,periods) VALUES (STR_TO_DATE(?,'%d-%m-%Y'),STR_TO_DATE(?,'%H:%i'),?,?)";
 
 	    int count = 0;
 		KeyHolder holder = new GeneratedKeyHolder();
@@ -92,6 +92,7 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 						ps.setString( 1, model.getEffectiveDt());
 						ps.setString( 2, model.getStartTm());
 						ps.setInt( 3, model.getWingId());
+						ps.setInt( 4, model.getPeriods());
 						
 						return ps ;
 					}
@@ -117,9 +118,10 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 
 	public Map<String, Object> updateTiming(Timing model) 
 	{
-		final String SQL = "UPDATE "+schoolId+"_mst_timing SET effective_dt = (STR_TO_DATE(?,'%d-%m-%Y') ,"
+		final String SQL = "UPDATE "+schoolId+"_mst_timing SET effective_from_dt = STR_TO_DATE(?,'%d-%m-%Y') ,"
 				+ " start_tm = STR_TO_DATE(?,'%H:%i'),"
-				+ " wing_id = ?  "
+				+ " wing_id = ? , "
+				+ " periods = ?  "
 				+ " WHERE timing_id = ?";
 
 	    int count = 0;
@@ -129,6 +131,7 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 					 model.getEffectiveDt(),
 					 model.getStartTm(),
 					 model.getWingId(),
+					 model.getPeriods(),
 					 model.getTimingId()
 				} );
 		}
@@ -162,7 +165,7 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 	@Override
 	public int deleteTimingPeriods(int timingId) {
 		String sql = " DELETE FROM "+schoolId+"_mst_timing_period WHERE timing_id = ? ";
-		return template.queryForObject(sql, new Object[]{ timingId }, Integer.class);
+		return template.update(sql, new Object[]{ timingId });
 	}
 
 	public int insertTimingPeriods(int timingId, TimingPeriodList timingPeriodList) {
@@ -173,7 +176,7 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 	@Override
 	public int updateTimingEndTm(String endTm, int timingId) {
 		String sql = " UPDATE "+schoolId+"_mst_timing SET end_tm = STR_TO_DATE(?,'%H:%i') WHERE timing_id = ? ";
-		return template.queryForObject(sql, new Object[]{ endTm, timingId }, Integer.class);
+		return template.update(sql, new Object[]{ endTm, timingId });
 	}
 
 	public Map<String, Object> getTimingPeriodList(int timingId) 
@@ -189,7 +192,7 @@ public class TimingDaoImpl implements TimingDaoInt, SMSLogger
 				" WHERE timing_id = ?";
 				
 		try {
-			List<TimingPeriodList> list = template.query(SQL,new TimingPeriodMapper());
+			List<TimingPeriodList> list = template.query(SQL,new Object[] {timingId},new TimingPeriodMapper());
 			
 			if(list.size()==0)
 			{

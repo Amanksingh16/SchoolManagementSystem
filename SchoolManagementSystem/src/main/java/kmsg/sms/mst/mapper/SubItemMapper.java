@@ -20,7 +20,7 @@ public class SubItemMapper implements RowMapper<SubItem>{
 		model.setQty(rs.getInt("qty"));
 		model.setItem(rs.getString("item"));
 		model.setItemCode(rs.getString("item_code"));
-		model.setUnit(rs.getInt("unit"));
+		model.setUnit(rs.getString("unit"));
 		model.setRate(rs.getFloat("rate"));
 		
 		return model;

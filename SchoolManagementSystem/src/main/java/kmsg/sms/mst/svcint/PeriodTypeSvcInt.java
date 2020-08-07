@@ -9,10 +9,10 @@ import javax.servlet.http.HttpSession;
 public interface PeriodTypeSvcInt {
 
 
-	Map<String, Object> TypeList(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> TypeList(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
-	Map<String, Object> TypeSave(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> TypeSave(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
 }

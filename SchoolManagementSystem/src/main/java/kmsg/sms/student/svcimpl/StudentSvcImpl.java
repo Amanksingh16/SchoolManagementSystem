@@ -30,15 +30,15 @@ public class StudentSvcImpl implements StudentSvcInt {
 	
 	@Override
 	@RequestMapping(value="/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getAllStudents( @RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) {
+	public Map<String, Object> getAllStudents( @RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 		
 		int schoolId = Integer.parseInt(params.get("schoolId"));
 
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
-		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {	
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			return studentAdapter.getAllStudents(schoolId);
 		}
 		return map;
@@ -46,15 +46,15 @@ public class StudentSvcImpl implements StudentSvcInt {
 	
 	@Override
 	@RequestMapping(value="/dtls", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getPersonalDtls( @RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) {
+	public Map<String, Object> getPersonalDtls( @RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		
+
 		String schoolStudent = params.get("schoolStudent");
 
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			return studentAdapter.getDtls( schoolStudent);
 		}
 		return map;
@@ -62,14 +62,15 @@ public class StudentSvcImpl implements StudentSvcInt {
 
 	@Override
 	@RequestMapping(value="/parents", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getParents( @RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) {
+	public Map<String, Object> getParents( @RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+
 		String schoolStudent = params.get("schoolStudent");
 
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
-		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {	
+		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			return studentAdapter.getParents(schoolStudent);
 		}
 		return map;
@@ -77,14 +78,15 @@ public class StudentSvcImpl implements StudentSvcInt {
 
 	@Override
 	@RequestMapping(value="/list_siblings", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getSiblings( @RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) {
+	public Map<String, Object> getSiblings( @RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) {
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
+
 		String schoolStudent = params.get("schoolStudent");
 
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS)) {	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			return studentAdapter.getSiblings( schoolStudent);
 		}
 		return map;

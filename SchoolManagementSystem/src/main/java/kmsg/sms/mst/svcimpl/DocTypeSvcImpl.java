@@ -30,15 +30,14 @@ public class DocTypeSvcImpl implements DocTypeSvcInt
 	RedisSession ses;
 	
 	@RequestMapping(value="/list", method = RequestMethod.GET, headers="Accept=application/json")
-	public Map<String, Object> getDocTypeList(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> getDocTypeList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			return adapter.getDocTypeList();
 		}
 		return map;

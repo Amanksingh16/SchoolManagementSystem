@@ -88,14 +88,14 @@ public class ManageClassDaoImpl implements ManageClassDaoInt,SMSLogger {
 		
 		Map<String, Object> result = new HashMap<>();
 		result.put(SvcStatus.STATUS, SvcStatus.SUCCESS);
-		result.put(" lstWingClass" ,  list );
+		result.put(" lstAllClassSections" ,  list );
 		return result ;	
 	}
 
 	@Override
 	public Map<String, Object> updateClass(ManageClass model) 
 	{
-		final String SQL = " UPDATE class_section SET wing_id = ?," 
+		final String SQL = " UPDATE "+schoolId+"_class_section SET wing_id = ?," 
 				+ "  class_id = ? ," 
 				+ "  class_label = ? ," 
 				+ "  section = ? ," 
@@ -149,7 +149,7 @@ public class ManageClassDaoImpl implements ManageClassDaoInt,SMSLogger {
 
 	@Override
 	public Map<String, Object> saveClass(ManageClass model) {
-		final String SQL = " INSERT INTO class_section (wing_id,class_id,class_label,section,building_id,room_id,max_students,class_teacher_id,prefect_student_id,monitor_student_id) VALUES (?,?,?,?,?,?,?,?,?,?)" ;
+		final String SQL = " INSERT INTO "+schoolId+"_class_section (wing_id,class_id,class_label,section,building_id,room_id,max_students,class_teacher_id,prefect_student_id,monitor_student_id) VALUES (?,?,?,?,?,?,?,?,?,?)" ;
 
 	    int count = 0;
 		KeyHolder holder = new GeneratedKeyHolder();

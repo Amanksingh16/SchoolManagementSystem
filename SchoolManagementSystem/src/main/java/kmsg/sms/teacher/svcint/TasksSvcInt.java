@@ -8,10 +8,10 @@ import javax.servlet.http.HttpSession;
 
 public interface TasksSvcInt {
 
-	Map<String, Object> getTasksList(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> getTasksList(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
-	Map<String, Object> saveTasks(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> saveTasks(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
 }

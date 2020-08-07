@@ -31,7 +31,11 @@ public class WingsAdapter implements SMSLogger
 	{
 		return dao.selectWings();
 	}
-	
+
+	public Map<String, Object> selectWing(int wingId) {
+		return dao.selectWing(wingId);
+	}
+
 	public Map<String, Object> addNewWing(String wings) 
 	{
 		Wings model = new Wings();
@@ -136,5 +140,22 @@ public class WingsAdapter implements SMSLogger
 	public Map<String, Object> selectWingSessions(String wingId) 
 	{
 		return dao.selectWingSessions(Integer.parseInt(wingId));
+	}
+
+	public Map<String, Object> getClasses(int wingId) {
+		
+		Map<String, Object> data = dao.selectWing( wingId);
+		
+		if ( SvcStatus.FAILURE.equals( data.get(SvcStatus.STATUS)))
+			return data ;
+		
+		Wings wing = (Wings)data.get("wing");
+		int fromClassId = wing.getFromClassId();
+		int toClassId = wing.getToClassId();
+		return dao.selectWingClasses( fromClassId, toClassId);
+	}
+
+	public Map<String, Object> getClassSections(int classId) {
+		return dao.selectClassSections( classId);
 	}
 }

@@ -8,13 +8,13 @@ import javax.servlet.http.HttpSession;
 
 public interface SupplierSvcInt {
 	
-	Map<String, Object> getSupplierList(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> getSupplierList(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 	
-	Map<String, Object> saveSupplier(Map<String, String> params, HttpSession httpSession, HttpServletRequest request,
+	Map<String, Object> saveSupplier(Map<String, String> params, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response);
 
-	Map<String, Object> GenerateSupplierPassword(Map<String, String> params, HttpSession httpSession,
+	Map<String, Object> GenerateSupplierPassword(Map<String, String> params, HttpSession session,
 			HttpServletRequest request, HttpServletResponse response);
 
 }

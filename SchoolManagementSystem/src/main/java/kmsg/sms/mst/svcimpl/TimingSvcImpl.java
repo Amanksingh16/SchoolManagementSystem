@@ -30,15 +30,15 @@ public class TimingSvcImpl implements TimingSvcInt
 	
 	@Override
 	@RequestMapping(value="/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getTimingList(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> getTimingList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			return adapter.getTimingList();
@@ -48,14 +48,15 @@ public class TimingSvcImpl implements TimingSvcInt
 	
 	@Override
 	@RequestMapping(value="/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveTiming(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> saveTiming(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String timing = params.get("timing");
@@ -66,15 +67,15 @@ public class TimingSvcImpl implements TimingSvcInt
 	
 	@Override
 	@RequestMapping(value="/period/list", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> getTimingPeriodList(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> getTimingPeriodList(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
 
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{	
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String timingId = params.get("timingId");
@@ -85,14 +86,15 @@ public class TimingSvcImpl implements TimingSvcInt
 	
 	@Override
 	@RequestMapping(value="/period/save", method = RequestMethod.POST, headers="Accept=application/json")
-	public Map<String, Object> saveTimingPeriod(@RequestParam Map<String, String> params, HttpSession httpSession,HttpServletRequest request, HttpServletResponse response) 
+	public Map<String, Object> saveTimingPeriod(@RequestParam Map<String, String> params, HttpSession session,HttpServletRequest request, HttpServletResponse response) 
 	{
 		Map<String,Object> map = new HashMap<>();
-		String CurrMethod = new Throwable().getStackTrace()[0].getMethodName();
-		map = ses.validateSchoolSession(httpSession.getId(), CurrMethod);
+
+		map = ses.validateSchoolSession(session.getId(),request.getHeader("tokenId"));
 		
 		if(map.get(SvcStatus.STATUS).equals(SvcStatus.SUCCESS))
 		{
+			response.setHeader("tokenId", (String)map.get("tokenId"));
 			int schoolId=(int) map.get("schoolId");
 			adapter.setSchoolId(schoolId);
 			String timingPeriod = params.get("timingPeriod");
